@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>BAVARIAN | Cinematic Smooth Flow</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;700;900&family=Syncopate:wght@400;700;900&display=swap"
+			rel="stylesheet" />
+
+		<style>
+			/* --- ASOSIY O'ZGARUVCHILAR --- */
+			:root {
+				--m-red: #e7222e;
+				--m-blue-light: #00a1e4;
+				--m-blue-dark: #122746;
+				--neon-red: #ff1e2c;
+				--text-main: #ffffff;
+				--bg-dark: #000000;
+				--font-body: 'Montserrat', sans-serif;
+				--font-display: 'Syncopate', sans-serif;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			/* --- SILLIQ SKROLL (SMOOTH SCROLL) --- */
+			html,
+			body {
+				font-family: var(--font-body);
+				color: var(--text-main);
+				background-color: var(--bg-dark);
+				overflow-x: hidden;
+				scroll-behavior: smooth;
+			}
+
+			/* --- NAVIGATSIYA MENU --- */
+			nav {
+				position: fixed;
+				top: 0;
+				width: 100%;
+				padding: 2rem 4rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				z-index: 1000;
+				background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
+				transition: background 0.3s ease;
+			}
+
+			nav.scrolled {
+				background: rgba(0, 0, 0, 0.85);
+				backdrop-filter: blur(10px);
+				padding: 1rem 4rem;
+			}
+
+			.logo {
+				font-family: var(--font-display);
+				font-size: 1.5rem;
+				font-weight: 900;
+				letter-spacing: 5px;
+				color: #fff;
+				text-decoration: none;
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+			}
+
+			.m-stripes {
+				display: flex;
+				height: 14px;
+				transform: skewX(-25deg);
+			}
+
+			.m-stripes div {
+				width: 8px;
+				height: 100%;
+				margin-right: 3px;
+			}
+			.stripe-1 {
+				background-color: var(--m-blue-light);
+				box-shadow: 0 0 10px var(--m-blue-light);
+			}
+			.stripe-2 {
+				background-color: var(--m-blue-dark);
+				box-shadow: 0 0 10px var(--m-blue-dark);
+			}
+			.stripe-3 {
+				background-color: var(--m-red);
+				box-shadow: 0 0 10px var(--m-red);
+			}
+
+			/* --- KUCHAYTIRILGAN AUDIO TUGMASI --- */
+			.audio-control {
+				position: fixed;
+				bottom: 3rem;
+				right: 4rem;
+				z-index: 1000;
+				display: flex;
+				align-items: center;
+				gap: 15px;
+				cursor: pointer;
+				padding: 12px 25px;
+				background: rgba(0, 0, 0, 0.7);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				backdrop-filter: blur(10px);
+				border-radius: 40px;
+				transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+			}
+
+			.audio-control:hover {
+				border-color: var(--neon-red);
+				transform: scale(1.05);
+				box-shadow: 0 0 25px rgba(231, 34, 46, 0.5);
+			}
+
+			.audio-control.playing {
+				border-color: var(--neon-red);
+				box-shadow:
+					0 0 30px rgba(231, 34, 46, 0.6),
+					inset 0 0 15px rgba(231, 34, 46, 0.3);
+			}
+
+			.audio-text {
+				font-family: var(--font-display);
+				font-size: 0.8rem;
+				letter-spacing: 3px;
+				font-weight: 700;
+			}
+
+			.sound-bars {
+				display: flex;
+				align-items: flex-end;
+				gap: 4px;
+				height: 18px;
+			}
+
+			.bar {
+				width: 3px;
+				background-color: var(--text-main);
+				height: 4px;
+				transition:
+					height 0.1s ease,
+					background-color 0.3s ease;
+				border-radius: 2px;
+			}
+
+			.audio-control.playing .bar {
+				background-color: var(--neon-red);
+				animation: soundBounce 0.8s infinite alternate ease-in-out;
+			}
+
+			.audio-control.playing .bar:nth-child(1) {
+				animation-delay: 0.1s;
+			}
+			.audio-control.playing .bar:nth-child(2) {
+				animation-delay: 0.3s;
+			}
+			.audio-control.playing .bar:nth-child(3) {
+				animation-delay: 0.2s;
+			}
+			.audio-control.playing .bar:nth-child(4) {
+				animation-delay: 0.4s;
+			}
+
+			@keyframes soundBounce {
+				0% {
+					height: 4px;
+				}
+				100% {
+					height: 18px;
+				}
+			}
+
+			/* --- VIDEO FON VA SEKSIYALAR --- */
+			.cinematic-section {
+				position: relative;
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				padding: 0 10%;
+				overflow: hidden;
+			}
+
+			.bg-video {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				z-index: 0;
+				filter: brightness(0.8);
+			}
+
+			.overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+			}
+
+			.content {
+				position: relative;
+				z-index: 2;
+				max-width: 800px;
+			}
+
+			/* Sektsiyalar qorong'uligi */
+			#hero {
+				justify-content: center;
+				text-align: center;
+			}
+			#hero .overlay {
+				background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+			}
+
+			#project-white {
+				justify-content: flex-start;
+			}
+			#project-white .overlay {
+				background: linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 80%);
+			}
+
+			#project-track {
+				justify-content: flex-end;
+				text-align: right;
+			}
+			#project-track .overlay {
+				background: linear-gradient(-90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 80%);
+			}
+
+			#project-cs {
+				justify-content: flex-start;
+			}
+			#project-cs .overlay {
+				background: linear-gradient(90deg, rgba(20, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 100%);
+			}
+
+			#project-orange {
+				justify-content: center;
+				text-align: center;
+			}
+			#project-orange .overlay {
+				background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.2) 100%);
+			}
+
+			/* --- MATNLAR --- */
+			.chassis-code {
+				font-family: var(--font-display);
+				font-size: 1rem;
+				letter-spacing: 12px;
+				color: rgba(255, 255, 255, 0.5);
+				margin-bottom: 1.5rem;
+				display: block;
+				text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+			}
+
+			h1,
+			h2 {
+				font-family: var(--font-display);
+				font-weight: 900;
+				line-height: 1.1;
+				margin-bottom: 1.5rem;
+				text-transform: uppercase;
+			}
+
+			h1 {
+				font-size: 7rem;
+			}
+			h2 {
+				font-size: 5rem;
+			}
+
+			.accent-red {
+				color: var(--neon-red);
+				text-shadow: 0 0 30px rgba(231, 34, 46, 0.6);
+			}
+
+			.outline-text {
+				color: transparent;
+				-webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
+			}
+
+			p.desc {
+				font-size: 1.2rem;
+				font-weight: 300;
+				color: #ddd;
+				letter-spacing: 2px;
+				line-height: 1.8;
+				margin-bottom: 3rem;
+				background: rgba(0, 0, 0, 0.4);
+				padding: 20px;
+				border-left: 3px solid var(--neon-red);
+				backdrop-filter: blur(5px);
+			}
+
+			/* --- ANIMATSIYALAR --- */
+			.reveal {
+				opacity: 0;
+				transform: translateY(50px);
+				transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+			}
+
+			.reveal.active {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.delay-1 {
+				transition-delay: 0.2s;
+			}
+			.delay-2 {
+				transition-delay: 0.4s;
+			}
+
+			@media (max-width: 1024px) {
+				h1 {
+					font-size: 4rem;
+				}
+				h2 {
+					font-size: 3rem;
+				}
+				nav {
+					padding: 1.5rem;
+				}
+				.audio-control {
+					bottom: 2rem;
+					right: 2rem;
+				}
+				#project-white,
+				#project-track,
+				#project-cs {
+					justify-content: center;
+					text-align: center;
+				}
+				p.desc {
+					border-left: none;
+					border-bottom: 3px solid var(--neon-red);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- AUDIO PLEYER (udari shu yerga tushadi) -->
+		<audio id="bgMusic" loop>
+			<!-- Shu yerda fayl nomi turibdi -->
+			<source src="udar-phonk.mp3" type="audio/mpeg" />
+		</audio>
+
+		<!-- NAVIGATSIYA -->
+		<nav id="navbar">
+			<a href="#" class="logo">
+				<div class="m-stripes">
+					<div class="stripe-1"></div>
+					<div class="stripe-2"></div>
+					<div class="stripe-3"></div>
+				</div>
+				BAVARIAN
+			</a>
+		</nav>
+
+		<!-- MUSIQA BOSHQARUVI -->
+		<div class="audio-control" id="audioBtn">
+			<span class="audio-text">BASS: OFF</span>
+			<div class="sound-bars">
+				<div class="bar"></div>
+				<div class="bar"></div>
+				<div class="bar"></div>
+				<div class="bar"></div>
+			</div>
+		</div>
+
+		<!-- 1: MATTE GREY -->
+		<section id="hero" class="cinematic-section">
+			<video autoplay loop muted playsinline class="bg-video">
+				<source src="cinema-web-1.mp4" type="video/mp4" />
+			</video>
+			<div class="overlay"></div>
+			<div class="content">
+				<span class="chassis-code reveal">PROJECT // VNL.33</span>
+				<h1 class="reveal delay-1">Menace <br /><span class="outline-text">Awakened.</span></h1>
+			</div>
+		</section>
+
+		<!-- 2: WHITE BUILD -->
+		<section id="project-white" class="cinematic-section">
+			<video autoplay loop muted playsinline class="bg-video">
+				<source src="cinema-web-2.mp4" type="video/mp4" />
+			</video>
+			<div class="overlay"></div>
+			<div class="content">
+				<span class="chassis-code reveal">ALPINE WHITE // ROOFTOP</span>
+				<h2 class="reveal delay-1">Pure <br /><span class="outline-text">Precision.</span></h2>
+				<p class="desc reveal delay-2">
+					Unveiled on the bridge, refined on the rooftop. Deep dish alloys and aggressive carbon front splitters contrasted
+					against immaculate Alpine White paintwork.
+				</p>
+			</div>
+		</section>
+
+		<!-- 3: TRACK SPEC -->
+		<section id="project-track" class="cinematic-section">
+			<video autoplay loop muted playsinline class="bg-video">
+				<source src="cinema-web-3.mp4" type="video/mp4" />
+			</video>
+			<div class="overlay"></div>
+			<div class="content">
+				<span class="chassis-code reveal">GUNMETAL // APEX</span>
+				<h2 class="reveal delay-1">Track <br /><span class="accent-red">Weapon.</span></h2>
+				<p class="desc reveal delay-2">
+					Function dictates form. Equipped with a massive rear wing, BBS-style modular wheels, and aggressive rear diffusion.
+				</p>
+			</div>
+		</section>
+
+		<!-- 4: M5 CS -->
+		<section id="project-cs" class="cinematic-section">
+			<video autoplay loop muted playsinline class="bg-video">
+				<source src="cinema-web-6.mp4" type="video/mp4" />
+			</video>
+			<div class="overlay"></div>
+			<div class="content">
+				<span class="chassis-code reveal">CS // EXCLUSIVE</span>
+				<h2 class="reveal delay-1">The <br /><span class="outline-text">Pinnacle.</span></h2>
+				<p class="desc reveal delay-2">
+					Gold bronze accents cutting through the darkness. The ultimate expression of four-door supremacy. Lighter, sharper,
+					ferociously powerful.
+				</p>
+			</div>
+		</section>
+
+		<!-- 5: ORANGE CANYON -->
+		<section id="project-orange" class="cinematic-section">
+			<video autoplay loop muted playsinline class="bg-video">
+				<source src="cinema-web-5.mp4" type="video/mp4" />
+			</video>
+			<div class="overlay"></div>
+			<div class="content">
+				<span class="chassis-code reveal">MD T 98 // CANYON</span>
+				<h2 class="reveal delay-1">Carve The <br /><span class="accent-red">Mountain.</span></h2>
+				<p class="desc reveal delay-2" style="border-left: none; border-bottom: 3px solid var(--neon-red)">
+					Built to be driven. Blazing orange paintwork, devastatingly low stance, and performance tuned to conquer every hairpin
+					turn.
+				</p>
+			</div>
+		</section>
+
+		<!-- JS SKRIPTLAR -->
+		<script>
+			// 1. Navigatsiya fonini skrollga qarab o'zgartirish
+			const navbar = document.getElementById('navbar');
+			window.addEventListener('scroll', () => {
+				if (window.scrollY > 50) {
+					navbar.classList.add('scrolled');
+				} else {
+					navbar.classList.remove('scrolled');
+				}
+			});
+
+			// 2. Musiqa Boshqaruvi
+			const bgMusic = document.getElementById('bgMusic');
+			const audioBtn = document.getElementById('audioBtn');
+			const audioText = document.querySelector('.audio-text');
+			let isPlaying = false;
+
+			audioBtn.addEventListener('click', () => {
+				if (isPlaying) {
+					bgMusic.pause();
+					audioBtn.classList.remove('playing');
+					audioText.innerText = 'BASS: OFF';
+				} else {
+					bgMusic.play();
+					audioBtn.classList.add('playing');
+					audioText.innerText = 'BASS: ON';
+				}
+				isPlaying = !isPlaying;
+			});
+
+			bgMusic.volume = 0.8; // Bass kuchliroq eshitilishi uchun
+
+			// 3. Silliq Skroll Animatsiyalari
+			const reveals = document.querySelectorAll('.reveal');
+
+			const revealOptions = {
+				threshold: 0.2, // Ekranning 20% qismi ko'ringanda ishlaydi
+				rootMargin: '0px 0px -50px 0px',
+			};
+
+			const revealOnScroll = new IntersectionObserver(function (entries, observer) {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('active');
+					}
+				});
+			}, revealOptions);
+
+			reveals.forEach(reveal => {
+				revealOnScroll.observe(reveal);
+			});
+		</script>
+	</body>
+</html>
